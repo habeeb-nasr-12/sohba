@@ -12,5 +12,7 @@ router.get("/user/:username", getUserPosts);
 
 //PRIVATE ROUTES
 router.post("/", protectRoute, upload.array("files", 10), validateFileSize, createPost);
-router.like("/:postId/like", protectRoute, likePost);
+router.post("/:postId/like", protectRoute, likePost);
 router.delete("/:postId", protectRoute, deletePost);
+
+export default router;
