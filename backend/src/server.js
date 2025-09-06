@@ -13,7 +13,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 app.use(clerkMiddleware());
 app.use(arcjetMiddleware);
 app.get("/", (req, res) => {
@@ -28,7 +28,6 @@ app.use("/api/notifications", notificationRoutes);
 app.use((err, req, res, next) => {
   console.error("Unhandled error", err);
   res.status(500).json({ error: err.message || "Internal server error" });
-
 });
 
 const startServer = async () => {
@@ -48,3 +47,6 @@ const startServer = async () => {
 };
 
 startServer();
+
+// export app for production
+export default app;
