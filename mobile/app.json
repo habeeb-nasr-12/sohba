@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "habeeb12-app",
-    "slug": "habeeb12-app",
+    "name": "Sohba",
+    "slug": "Sohba",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "habeeb12app",
+    "scheme": "sohba",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
