@@ -1,11 +1,15 @@
-import { Text, View } from "react-native";
+import { View, Text, Button } from "react-native";
+import React from "react";
+import { useClerk } from "@clerk/clerk-expo";
 
-export default function Index() {
+const Index = () => {
+  const { signOut } = useClerk();
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-xl font-bold text-red-500">
-        Welcome to Nativewind!
-      </Text>
+    <View>
+      <Text>index</Text>
+      <Button title="Sign Out" onPress={() => signOut()} />
     </View>
   );
-}
+};
+
+export default Index;
