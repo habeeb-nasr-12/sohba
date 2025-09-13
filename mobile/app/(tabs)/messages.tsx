@@ -1,12 +1,9 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import MessageScreen from "../../modules/Messages/Components/MessageScreen";
+const Messages = () => {
 
-const messages = () => {
   return (
-    <View>
-      <Text>messages</Text>
-    </View>
+   <MessageScreen/>
   )
 }
 
-export default messages
+export default Messages
