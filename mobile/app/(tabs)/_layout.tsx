@@ -2,12 +2,17 @@ import React from "react";
 import { Tabs, Redirect } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAuth } from "@clerk/clerk-expo";
+import { useAuth } from "../../shared/contexts/AuthContext";
 
 const TabsLayout = () => {
   const insets = useSafeAreaInsets();
-  const { isSignedIn } = useAuth();
-  if (!isSignedIn) return <Redirect href="/(auth)" />;
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (!isAuthenticated) return <Redirect href="/(auth)" />;
 
   return (
     <Tabs
@@ -29,7 +34,7 @@ const TabsLayout = () => {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Feather name="home" color={color} size={size} />
           ),
         }}
@@ -39,7 +44,7 @@ const TabsLayout = () => {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Feather name="search" color={color} size={size} />
           ),
         }}
@@ -49,7 +54,7 @@ const TabsLayout = () => {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Feather name="bell" color={color} size={size} />
           ),
         }}
@@ -57,9 +62,9 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="messages"
         options={{
-          title: "Messages",
+          title: "",
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Feather name="message-circle" color={color} size={size} />
           ),
         }}
@@ -69,7 +74,7 @@ const TabsLayout = () => {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Feather name="user" color={color} size={size} />
           ),
         }}

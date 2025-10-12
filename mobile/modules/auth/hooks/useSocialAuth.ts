@@ -1,26 +1,32 @@
-import { useSSO } from "@clerk/clerk-expo";
-import { useState } from "react";
 import { Alert } from "react-native";
+import { useSignInWithGoogle } from "../../../shared/hooks/auth";
+
 export const useSocialAuth = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const { startSSOFlow } = useSSO();
+  const {mutateAsync : googleSignInMutation, isPending} = useSignInWithGoogle();
+
   const handleSocialAuth = async (strategy: "oauth_google" | "oauth_apple") => {
-    setIsLoading(true);
-    try {
-      const { createdSessionId, setActive } = await startSSOFlow({ strategy });
-      if (createdSessionId && setActive) {
-        await setActive({ session: createdSessionId });
+    if (strategy === "oauth_google") {
+      try {
+        await googleSignInMutation();
+      } catch (err: any) {
+        // Don't show alert for user cancellation
+        if (err.message?.includes("cancel") || err.message?.includes("dismiss")) {
+          return;
+        }
+        
+        // Show error alert for other failures
+        Alert.alert(
+          "Google Sign In Failed", 
+          err.message || "An unexpected error occurred during Google sign in"
+        );
       }
-    } catch (error) {
-      console.log(error);
-      const provider = strategy === "oauth_google" ? "google" : "apple";
-      Alert.alert(`Error signing in with ${provider}`);
-    } finally {
-      setIsLoading(false);
+    } else {
+      Alert.alert("Apple Sign In", "Apple sign in is not yet implemented");
     }
   };
+
   return {
     handleSocialAuth,
-    isLoading,
+    isLoading: isPending,
   };
 };

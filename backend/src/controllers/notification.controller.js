@@ -1,12 +1,11 @@
 import asyncHandler from "express-async-handler";
-import { getAuth } from "@clerk/express";
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 
 export const getNotifications = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
+  const userId = req.user.id;
 
-  const user = await User.findOne({ clerkId: userId });
+  const user = await User.findById(userId);
   if (!user) return res.status(404).json({ error: "User not found" });
 
   const notifications = await Notification.find({ to: user._id })
@@ -19,10 +18,10 @@ export const getNotifications = asyncHandler(async (req, res) => {
 });
 
 export const deleteNotification = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
+  const userId = req.user.id;
   const { notificationId } = req.params;
 
-  const user = await User.findOne({ clerkId: userId });
+  const user = await User.findById(userId);
   if (!user) return res.status(404).json({ error: "User not found" });
 
   const notification = await Notification.findOneAndDelete({

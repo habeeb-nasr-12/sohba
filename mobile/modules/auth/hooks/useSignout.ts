@@ -1,8 +1,8 @@
-import { useClerk } from "@clerk/clerk-expo";
 import { Alert } from "react-native";
+import { useSignOut as useCustomSignOut } from "../../../shared/hooks/auth";
 
 export const useSignOut = () => {
-  const { signOut } = useClerk();
+  const signOutMutation = useCustomSignOut();
 
   const handleSignOut = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
@@ -10,7 +10,7 @@ export const useSignOut = () => {
       {
         text: "Logout",
         style: "destructive",
-        onPress: () => signOut(),
+        onPress: () => signOutMutation.mutate(),
       },
     ]);
   };

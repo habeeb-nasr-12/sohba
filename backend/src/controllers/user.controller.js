@@ -1,8 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
-import Notification from "../models/notification.model.js"; 
-import { getAuth } from "@clerk/express";
-import { clerkClient } from "@clerk/express";
+import Notification from "../models/notification.model.js";
 export const getUserProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
   const user = await User.findOne({ username });
@@ -13,8 +11,8 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 export const updatProfile = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
-  const user = await User.findOneAndUpdate({ clerkId: userId }, req.body, {
+  const userId = req.user.id;
+  const user = await User.findByIdAndUpdate(userId, req.body, {
     new: true,
   });
   if (!user) {
@@ -23,35 +21,24 @@ export const updatProfile = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
+// Note: syncUser is no longer needed with JWT auth
+// User creation is handled in auth controller during registration
 export const syncUser = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
-  const user = await User.findOne({ clerkId: userId });
-  if (user) {
-    return res.status(200).json({
-      message: "User already exists",
-      user: user,
-    });
+  const userId = req.user.id;
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
   }
-  const clerkUser = await clerkClient.users.getUser(userId);
-  const userData = {
-    clerkId: userId,
-    email: clerkUser.emailAddresses[0].emailAddress,
-    firstName: clerkUser.firstName || "",
-    lastName: clerkUser.lastName || "",
-    username: clerkUser.emailAddresses[0].emailAddress.split("@")[0],
-    profilePicture: clerkUser.imageUrl || "",
-  };
-  const newUser = await User.create(userData);
   res.status(200).json({
-    message: "User created successfully",
-    user: newUser,
+    message: "User sync successful",
+    user: user,
   });
 });
 
 
 export const getCurrentUser = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
-  const user = await User.findOne({ clerkId: userId });
+  const userId = req.user.id;
+  const user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -59,12 +46,12 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 export const followUser = asyncHandler(async (req, res) => {
-    const { userId } = getAuth(req);
+    const userId = req.user.id;
     const { targetUserId } = req.params;
   
     if (userId === targetUserId) return res.status(400).json({ error: "You cannot follow yourself" });
   
-    const currentUser = await User.findOne({ clerkId: userId });
+    const currentUser = await User.findById(userId);
     const targetUser = await User.findById(targetUserId);
   
     if (!currentUser || !targetUser) return res.status(404).json({ error: "User not found" });

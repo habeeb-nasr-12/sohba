@@ -1,6 +1,10 @@
 {
   "expo": {
     "name": "Sohba",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "slug": "Sohba",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -33,7 +37,10 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

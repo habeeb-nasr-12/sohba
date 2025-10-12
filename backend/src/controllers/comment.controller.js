@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler";
 import mongoose from "mongoose";
 import Comment from "../models/comment.model.js";
-import { getAuth } from "@clerk/express";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
@@ -15,11 +14,11 @@ export const getComments = asyncHandler(async (req, res) => {
 });
 
 export const createComment = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
+  const userId = req.user.id;
   const { postId } = req.params;
   const { content } = req.body;
 
-  const user = await User.findOne({ clerkId: userId });
+  const user = await User.findById(userId);
   const post = await Post.findById(postId);
   if (!user || !post) {
     return res.status(404).json({ message: "User or post not found" });
@@ -80,9 +79,9 @@ export const createComment = asyncHandler(async (req, res) => {
 });
 
 export const deleteComment = asyncHandler(async (req, res) => {
-  const { userId } = getAuth(req);
+  const userId = req.user.id;
   const { commentId } = req.params;
-  const user = await User.findOne({ clerkId: userId });
+  const user = await User.findById(userId);
   const comment = await Comment.findById(commentId);
   if (!user || !comment) {
     return res.status(404).json({ message: "User or comment not found" });

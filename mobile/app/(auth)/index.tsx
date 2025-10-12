@@ -1,5 +1,5 @@
-import SocailAuth from "../../modules/auth/components/SocailAuth";
+import AuthScreen from "../../modules/auth/components/AuthScreen";
 
 export default function Index() {
-  return <SocailAuth />;
+  return <AuthScreen />;
 }
