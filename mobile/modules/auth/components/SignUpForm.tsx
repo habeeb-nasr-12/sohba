@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -7,14 +7,17 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { Form, Input, Button, Provider } from "@ant-design/react-native";
+import { Form, Input } from "@ant-design/react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useSignUp, useSignInWithGoogle } from "../../../shared/hooks/auth";
 import { router } from "expo-router";
 
-export default function SignUpForm() {
+interface SignUpFormProps {
+  onToggleToSignIn: () => void;
+}
+
+export default function SignUpForm({ onToggleToSignIn }: SignUpFormProps) {
   const [form] = Form.useForm();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { mutateAsync, isPending } = useSignUp();
   const googleSignInMutation = useSignInWithGoogle();
 
@@ -31,7 +34,7 @@ export default function SignUpForm() {
     mutateAsync(values, {
       onSuccess: () => {
         router.push("/(tabs)");
-      }
+      },
     });
   };
 
@@ -44,72 +47,110 @@ export default function SignUpForm() {
       await googleSignInMutation.mutateAsync();
       // Navigation is handled in the hook's onSuccess callback
     } catch (error: any) {
-    
-      if (!error.message?.includes('cancel') && !error.message?.includes('dismiss')) {
-        Alert.alert("Google Sign In Error", error.message || "Failed to sign in with Google");
+      if (
+        !error.message?.includes("cancel") &&
+        !error.message?.includes("dismiss")
+      ) {
+        Alert.alert(
+          "Google Sign In Error",
+          error.message || "Failed to sign in with Google"
+        );
       }
     }
   };
 
   return (
-    <Provider>
-      <ScrollView
-        className="flex-1 bg-white"
-        keyboardShouldPersistTaps="handled"
-      >
-        <View className="px-8 py-6">
-          <View className="mb-8">
-            <Text className="text-3xl font-bold text-center text-gray-900 mb-2">
-              Join Sohba
-            </Text>
-            <Text className="text-gray-600 text-center">
-              Create your account to get started
-            </Text>
-          </View>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      className="flex-1"
+    >
+      <View className="px-6 py-4">
+        <View className="mb-8">
+          <Text
+            style={{
+              fontSize: 32,
+              fontWeight: "700",
+              color: "#1a1a1a",
+              textAlign: "center",
+              marginBottom: 8,
+              letterSpacing: -0.5,
+            }}
+          >
+            Join Sohba
+          </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              color: "#6b7280",
+              textAlign: "center",
+              fontWeight: "400",
+            }}
+          >
+            Join The First Muslim App
+          </Text>
+        </View>
+
+        {/* Sign Up Form */}
+        <View
+          style={{
+            backgroundColor: "#ffffff",
+            borderRadius: 20,
+            padding: 24,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            elevation: 5,
+          }}
+        >
           <Form
             form={form}
             onFinish={handleFinish}
             onFinishFailed={handleFinishFailed}
+            layout="vertical" 
+
           >
             <Form.Item
               name="username"
+              label="User Name "
               rules={[{ required: true, message: "Username is required" }]}
             >
               <Input
                 placeholder="Choose a username"
                 autoCapitalize="none"
                 style={{
-                  borderWidth: 1,
-                  borderColor: "#e1e5e9",
-                  borderRadius: 8,
-                  paddingHorizontal: 12,
-                  height: 48,
+                  borderWidth: 1.5,
+                  borderColor: "#e5e7eb",
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  height: 52,
                 }}
               />
             </Form.Item>
             <Form.Item
               name="email"
+              label="Email Address"
               rules={[
                 { required: true, message: "Email is required" },
                 { type: "email", message: "Please enter a valid email" },
               ]}
             >
               <Input
-                placeholder="Enter your email"
+                placeholder="you@example.com"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 style={{
-                  borderWidth: 1,
-                  borderColor: "#e1e5e9",
-                  borderRadius: 8,
-                  paddingHorizontal: 12,
-                  height: 48,
+                  borderWidth: 1.5,
+                  borderColor: "#e5e7eb",
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  height: 52,
                 }}
               />
             </Form.Item>
-
-            {/* Password */}
             <Form.Item
+              label="Password"
               name="password"
               rules={[{ required: true, message: "Password is required" }]}
             >
@@ -118,15 +159,16 @@ export default function SignUpForm() {
                 secureTextEntry={true}
                 type="password"
                 style={{
-                  borderWidth: 1,
-                  borderColor: "#e1e5e9",
-                  borderRadius: 8,
-                  paddingHorizontal: 12,
-                  height: 48,
+                  borderWidth: 1.5,
+                  borderColor: "#e5e7eb",
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  height: 52,
                 }}
               />
             </Form.Item>
             <Form.Item
+              label="Confirm Password"
               name="confirmPassword"
               dependencies={["password"]}
               rules={[
@@ -145,69 +187,123 @@ export default function SignUpForm() {
                 placeholder="Confirm your password"
                 secureTextEntry={true}
                 style={{
-                  borderWidth: 1,
-                  borderColor: "#e1e5e9",
-                  borderRadius: 8,
-                  paddingHorizontal: 12,
-                  paddingRight: 50,
-                  height: 48,
+                  borderWidth: 1.5,
+                  borderColor: "#e5e7eb",
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  height: 52,
                 }}
               />
             </Form.Item>
             <Form.Item>
-              <Button
-                type="primary"
+              <TouchableOpacity
                 onPress={handleSubmit}
-                loading={isPending}
-                style={{
-                  backgroundColor: "#1DA1F2",
-                  borderColor: "#1DA1F2",
-                  borderRadius: 8,
-                  height: 48,
-                }}
+                disabled={isPending}
+                activeOpacity={0.8}
               >
-                <Text className="text-white font-semibold">Create Account</Text>
-              </Button>
+                <LinearGradient
+                  colors={["#1DA1F2", "#0d8bd9"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 14,
+                    height: 54,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    shadowColor: "#1DA1F2",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: 6,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#ffffff",
+                      fontSize: 16,
+                      fontWeight: "700",
+                    }}
+                  >
+                    {isPending ? "Creating Account..." : "Create Account"}
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
             </Form.Item>
           </Form>
 
           {/* Divider */}
           <View className="flex-row items-center my-6">
-            <View className="flex-1 h-px bg-gray-300" />
-            <Text className="mx-4 text-gray-500">OR</Text>
-            <View className="flex-1 h-px bg-gray-300" />
+            <View style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
+            <Text
+              style={{
+                marginHorizontal: 16,
+                color: "#9ca3af",
+                fontSize: 13,
+                fontWeight: "500",
+              }}
+            >
+              OR
+            </Text>
+            <View style={{ flex: 1, height: 1, backgroundColor: "#e5e7eb" }} />
           </View>
 
           {/* Google Sign In */}
           <TouchableOpacity
-            className="flex-row items-center justify-center bg-white border border-gray-300 rounded-lg py-3 px-6 mb-6"
             onPress={handleGoogleSignIn}
             disabled={googleSignInMutation.isPending}
+            activeOpacity={0.7}
             style={{
+              backgroundColor: "#ffffff",
+              borderWidth: 1.5,
+              borderColor: "#e5e7eb",
+              borderRadius: 14,
+              paddingVertical: 14,
+              paddingHorizontal: 20,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
               shadowColor: "#000",
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.1,
-              shadowRadius: 2,
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.05,
+              shadowRadius: 4,
               elevation: 2,
             }}
           >
             {googleSignInMutation.isPending ? (
-              <Text className="text-gray-600">Signing in...</Text>
+              <Text
+                style={{ color: "#6b7280", fontSize: 15, fontWeight: "600" }}
+              >
+                Signing in...
+              </Text>
             ) : (
-              <View className="flex-row items-center">
+              <>
                 <Image
                   source={require("../../../assets/images/google.png")}
-                  className="size-5 mr-3"
+                  style={{ width: 20, height: 20, marginRight: 12 }}
                   resizeMode="contain"
                 />
-                <Text className="text-gray-800 font-medium">
+                <Text
+                  style={{ color: "#1f2937", fontSize: 15, fontWeight: "600" }}
+                >
                   Continue with Google
                 </Text>
-              </View>
+              </>
             )}
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </Provider>
+
+        <View className="mt-8 mb-4">
+          <Text style={{ textAlign: "center", color: "#6b7280", fontSize: 14 }}>
+            Already have an account?{" "}
+            <Text
+              style={{ color: "#1DA1F2", fontWeight: "600" }}
+              onPress={onToggleToSignIn}
+            >
+              Sign in
+            </Text>
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
   );
 }

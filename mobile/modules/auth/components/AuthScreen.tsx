@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
@@ -8,42 +8,38 @@ export default function AuthScreen() {
   const [isSignIn, setIsSignIn] = useState(true);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      {/* Tab Header */}
-      <View className="flex-row mx-8 mt-4 mb-2">
-        <TouchableOpacity
-          className={`flex-1 py-3 rounded-lg mr-2 ${
-            isSignIn ? 'bg-blue-50' : 'bg-gray-100'
-          }`}
-          onPress={() => setIsSignIn(true)}
-        >
-          <Text
-            className={`text-center font-semibold ${
-              isSignIn ? 'text-blue-600' : 'text-gray-600'
-            }`}
+    <SafeAreaView className="flex-1" >
+  
+        <View className="items-center pt-8 pb-4">
+          <View 
+            style={{
+              shadowColor: '#1DA1F2',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.15,
+              shadowRadius: 20,
+              elevation: 10,
+            }}
           >
-            Sign In
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          className={`flex-1 py-3 rounded-lg ml-2 ${
-            !isSignIn ? 'bg-blue-50' : 'bg-gray-100'
-          }`}
-          onPress={() => setIsSignIn(false)}
-        >
-          <Text
-            className={`text-center font-semibold ${
-              !isSignIn ? 'text-blue-600' : 'text-gray-600'
-            }`}
-          >
-            Sign Up
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Form Content */}
-      {isSignIn ? <SignInForm /> : <SignUpForm />}
+            <Image
+              source={require('../../../assets/images/sohpa.jpg')}
+              style={{
+                width: 300,
+                height: 150,
+                borderRadius: 24,
+                borderWidth: 3,
+                borderColor: '#ffffff',
+              }}
+              resizeMode="cover"
+            />
+          </View>
+        </View>         
+        <View className="flex-1">
+          {isSignIn ? (
+            <SignInForm onToggleToSignUp={() => setIsSignIn(false)} />
+          ) : (
+            <SignUpForm onToggleToSignIn={() => setIsSignIn(true)} />
+          )}
+        </View>
     </SafeAreaView>
   );
 }
