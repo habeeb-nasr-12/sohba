@@ -1,11 +1,10 @@
 import React from "react";
-import { Tabs, Redirect } from "expo-router";
-import { Feather } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Redirect } from "expo-router";
+import { NativeTabs, Icon, Badge } from "expo-router/unstable-native-tabs";
 import { useAuth } from "../../shared/contexts/AuthContext";
+import { Platform ,DynamicColorIOS} from 'react-native';
 
 const TabsLayout = () => {
-  const insets = useSafeAreaInsets();
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -15,71 +14,65 @@ const TabsLayout = () => {
   if (!isAuthenticated) return <Redirect href="/(auth)" />;
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: "#1DA1F2",
-        tabBarInactiveTintColor: "#657786",
-        tabBarStyle: {
-          backgroundColor: "#fff",
-          borderTopWidth: 1,
-          borderTopColor: "#E1E8ED",
-          height: 50 + insets.bottom,
-          paddingTop: 8,
-        },
-        headerShown: false,
+    <NativeTabs 
+     
+      labelStyle={{
+        fontSize: 10,
+        fontWeight: '500',
+        color: DynamicColorIOS({
+          dark: 'white',
+          light: 'black',
+        }),
+        // For the selected icon color
+        tintColor: DynamicColorIOS({
+          dark: 'white',
+          light: 'black',
+        }),
       }}
+      {...(Platform.OS === 'ios' && {
+        blurEffect: 'systemMaterial',
+      })}
+      
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "",
-          headerShown: false,
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Feather name="home" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="search"
-        options={{
-          title: "",
-          headerShown: false,
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Feather name="search" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          title: "",
-          headerShown: false,
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Feather name="bell" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="messages"
-        options={{
-          title: "",
-          headerShown: false,
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Feather name="message-circle" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "",
-          headerShown: false,
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Feather name="user" color={color} size={size} />
-          ),
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger  options={{title :""}} name="index">
+        <Icon 
+          sf="house.fill" 
+          drawable="ic_home_black_24dp" 
+       
+        />
+        {/* <Label>Home</Label> */}
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger options={{title :""}} name="search">
+        <Icon 
+          sf="magnifyingglass" 
+          drawable="ic_search_black_24dp" 
+        />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger options={{title :""}} name="notifications">
+        <Icon 
+          sf="bell.fill" 
+          drawable="ic_notifications_black_24dp" 
+        />
+        {/* <Badge></Badge> */}
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger options={{title :""}} name="messages">
+        <Icon 
+          sf="message.fill" 
+          drawable="ic_message_black_24dp" 
+        />
+        <Badge>9+</Badge>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger options={{title :""}} name="profile">
+        <Icon 
+          sf="person.fill" 
+          drawable="ic_person_black_24dp" 
+        />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 };
 
